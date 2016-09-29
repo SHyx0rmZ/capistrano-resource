@@ -1,0 +1,51 @@
+#!/usr/bin/ruby
+
+require 'fileutils'
+require 'json'
+require 'rubygems'
+
+$stdout = STDERR
+
+input = JSON.load($stdin.read, nil, { symbolize_names: true, create_additions: false })
+
+unless input[:source] && input[:source][:stage] && input[:source][:private_key] && input[:params] && input[:params][:path]
+  missing = []
+  missing << :stage unless input[:source][:stage]
+  missing << :private_key unless input[:source][:private_key]
+  missing << :path unless input[:params][:path]
+
+  puts("Missing required settings: #{missing.map{ |s| "'#{s}'" }.join(', ') }")
+
+  exit 1
+end
+
+private_key_path = '/tmp/capistrano-resource-private-key'
+
+File.write(private_key_path, input[:source][:private_key])
+File.chmod(0600, private_key_path)
+
+%x| DISPLAY= ssh-add #{private_key_path} > /dev/null |
+
+current_dir = Dir.pwd
+
+Dir.chdir("#{ARGV.first}/#{input[:params][:path]}")
+
+gem 'bundler'
+require 'bundler/cli'
+require 'bundler/cli/install'
+
+Bundler::CLI::Install.new({}).run
+
+gem 'capistrano'
+require 'capistrano/all'
+
+self.class.send(:remove_const, :ARGV)
+self.class.send(:const_set, :ARGV, [ input[:source][:stage], 'deploy' ])
+
+Capistrano::Application.new.run
+
+Dir.chdir(current_dir)
+
+$stdout = STDOUT
+
+puts({ version: { ref: :none }, metadata: [] }.to_json)
