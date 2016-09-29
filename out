@@ -40,17 +40,18 @@ Dir.chdir("#{ARGV.first}/#{input[:params][:path]}")
 
 gem 'bundler'
 require 'bundler/cli'
-require 'bundler/cli/install'
 
-Bundler::CLI::Install.new({}).run
+Bundler::CLI.new(
+  [],
+  { 'no-color': false, retry: 3, verbose: false },
+  { current_command: Bundler::Thor::Command.new(:install, '', '', '') }
+).invoke(:install)
 
-gem 'capistrano'
-require 'capistrano/all'
-
-self.class.send(:remove_const, :ARGV)
-self.class.send(:const_set, :ARGV, [ input[:source][:stage], 'deploy' ])
-
-Capistrano::Application.new.run
+Bundler::CLI.new(
+  [ 'cap', input[:source][:stage], 'deploy' ],
+  { 'no-color': false, retry: 3, verbose: false },
+  { current_command: Bundler::Thor::Command.new(:exec, '', '', '') }
+).invoke(:exec)
 
 Dir.chdir(current_dir)
 
