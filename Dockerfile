@@ -3,6 +3,7 @@ FROM alpine:edge
 MAINTAINER Patrick Pokatilo <docker-hub@shyxormz.net>
 
 RUN apk update && apk add \
+  git \
   openssh \
   ruby \
   ruby-io-console \
