@@ -24,7 +24,7 @@ private_key_path = '/tmp/capistrano-resource-private-key'
 File.write(private_key_path, input[:source][:private_key])
 File.chmod(0600, private_key_path)
 
-%x| eval (ssh-agent) >/dev/null 2>&1 |
+%x| eval $(ssh-agent) >/dev/null 2>&1 |
 %x| DISPLAY= ssh-add #{private_key_path} > /dev/null |
 
 current_dir = Dir.pwd
