@@ -6,7 +6,7 @@ RUN apk update && apk add \
   openssh \
   ruby \
   ruby-json \
-  && gem install --no-rdoc --no-ri bundler \
+  && gem install --no-rdoc --no-ri bundler io-console \
   && mkdir -pv ~/.ssh \
   && echo -ne "StrictHostKeyChecking no\nLogLevel quiet\n" > ~/.ssh/config \
   && chmod 0600 ~/.ssh/config
