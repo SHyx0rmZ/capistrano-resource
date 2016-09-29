@@ -11,4 +11,3 @@ RUN apk update && apk add \
   && chmod 0600 ~/.ssh/config
 
 COPY check in out /opt/resource/
-COMMAND
