@@ -13,6 +13,13 @@ Enables you to run [Capistrano](http://capistranorb.com/) deployments from your 
 Resource configuration for production environment:
 
 ``` yaml
+resource_types:
+- name: capistrano
+  type: docker-image
+  source:
+    repository: shyxormz/capistrano-resource
+    tag: latest
+
 resources:
 - name: production-deployment
   type: capistrano
