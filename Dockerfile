@@ -6,6 +6,7 @@ RUN apk update && apk add \
   git \
   openssh \
   ruby \
+  ruby-etc \
   ruby-io-console \
   ruby-json \
   && gem install --no-rdoc --no-ri bundler \
